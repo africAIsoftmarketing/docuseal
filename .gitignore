@@ -38,3 +38,9 @@ yarn-debug.log*
 /ee
 dump.rdb
 *.onnx
+.env.*
+*.env
+credentials.json
+*.pem
+*.key
+.credentials
