@@ -1,0 +1,42 @@
+{
+  "name": "DocuSeal",
+  "description": "Open-source document signing platform (Heroku-ready)",
+  "repository": "https://github.com/your-org/docuseal-heroku",
+  "keywords": ["ruby", "rails", "esign", "documents", "signature"],
+  "stack": "heroku-24",
+  "buildpacks": [
+    { "url": "heroku-community/apt" },
+    { "url": "heroku/nodejs" },
+    { "url": "heroku/ruby" }
+  ],
+  "addons": [
+    { "plan": "heroku-postgresql:essential-0" },
+    { "plan": "heroku-redis:mini" }
+  ],
+  "env": {
+    "SECRET_KEY_BASE": { "generator": "secret" },
+    "RAILS_ENV": { "value": "production" },
+    "RAILS_SERVE_STATIC_FILES": { "value": "true" },
+    "RAILS_LOG_TO_STDOUT": { "value": "true" },
+    "FORCE_SSL": { "value": "true" },
+    "WEB_CONCURRENCY": { "value": "2" },
+    "RAILS_MAX_THREADS": { "value": "5" },
+    "SIDEKIQ_THREADS": { "value": "10" },
+    "S3_ATTACHMENTS_BUCKET": { "description": "S3 bucket name for document storage", "required": true },
+    "S3_ACCESS_KEY_ID": { "description": "S3 access key", "required": true },
+    "S3_SECRET_ACCESS_KEY": { "description": "S3 secret key", "required": true },
+    "S3_REGION": { "value": "us-east-1" },
+    "S3_ENDPOINT": { "description": "Custom S3 endpoint for Cloudflare R2 / MinIO (optional)", "required": false },
+    "SMTP_ADDRESS": { "description": "SMTP server address", "required": false },
+    "SMTP_PORT": { "value": "587" },
+    "SMTP_USERNAME": { "description": "SMTP username", "required": false },
+    "SMTP_PASSWORD": { "description": "SMTP password", "required": false }
+  },
+  "formation": {
+    "web": { "quantity": 1, "size": "basic" },
+    "worker": { "quantity": 1, "size": "basic" }
+  },
+  "scripts": {
+    "postdeploy": "bundle exec rails db:migrate && bundle exec rails docuseal:download_model"
+  }
+}
